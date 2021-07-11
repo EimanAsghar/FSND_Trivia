@@ -164,7 +164,6 @@ def create_app(test_config=None):
             'currentCategory': None
         })
 
-
     '''
   @TODO: 
   Create a GET endpoint to get questions based on category. 
@@ -181,7 +180,7 @@ def create_app(test_config=None):
             result = Question.query.filter(
                 Question.category == str(category_id)).all()
             questions = [question.format() for question in result]
-            
+
             return jsonify({
                 'questions': questions,
                 'totalQuestions': len(questions),
@@ -208,5 +207,45 @@ def create_app(test_config=None):
   Create error handlers for all expected errors 
   including 404 and 422. 
   '''
+    @app.errorhandler(404)
+    def not_found(error):
+        return jsonify({
+            "success": False,
+            "error": 404,
+            "message": "Not found"
+        }), 404
 
+    @app.errorhandler()
+    def unprocessable(error):
+        return jsonify({
+            "success": False,
+            "error": 422,
+            "message": "unprocessable"
+        }), 422
+
+    @app.errorhandler()
+    def bad_request(error):
+        return jsonify({
+            "success": False,
+            "error": 400,
+            "message": "Bad Request "
+        }), 400
+
+    @app.errorhandler()
+    def bad_request(error):
+        return jsonify({
+            "success": False,
+            "error": 400,
+            "message": "Bad Request "
+        }), 400
+
+    @app.errorhandler()
+    def Internal_Server(error):
+        return jsonify({
+            "success": False,
+            "error": 500,
+            "message": "Internal Server Error"
+        }), 500
+
+        
     return app
