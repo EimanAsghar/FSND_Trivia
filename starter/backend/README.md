@@ -100,7 +100,7 @@ The `--reload` flag will detect file changes and restart the server automaticall
     'category': 3,
 }
 ```
-### POST /questions/search
+### POST /questions
 - General: Sends a post request in order to search for a specific question by search term
 - Sample: 
 ```bash
