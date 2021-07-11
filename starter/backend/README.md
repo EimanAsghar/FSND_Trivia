@@ -60,7 +60,7 @@ The `--reload` flag will detect file changes and restart the server automaticall
    - 500: Internal Server Error
 ## Endpoints 
 ### GET /categories
--General:
+- General:
  - Return a list of categories.
 - Sample: curl http://localhost:5000/categories
 ```bash
