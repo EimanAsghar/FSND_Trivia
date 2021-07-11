@@ -75,12 +75,41 @@ The `--reload` flag will detect file changes and restart the server automaticall
 }
 
 ```
-### GET /questions
-### DELETE /questions/<int:question_id>
-### POST /questions
-### POST /questions/search
-### GET /categories/<int:category_id>/questions
+### GET /questions?page=${integer}
+- General: Return a list of questions, result are paginated in group of 10.
+- Sample: curl http://localhost:5000/questions?page=1
+```bash
 
+
+```
+### DELETE /questions/<int:question_id>
+- General: 
+- Sample: 
+```bash
+
+
+```
+### POST /questions
+- General: 
+- Sample: 
+```bash
+
+
+```
+### POST /questions/search
+- General: 
+- Sample: 
+```bash
+
+
+```
+### GET /categories/<int:category_id>/questions
+- General: 
+- Sample: 
+```bash
+
+
+```
 ## Testing
 To run the tests, run
 ```
