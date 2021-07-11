@@ -58,6 +58,14 @@ The `--reload` flag will detect file changes and restart the server automaticall
    - 404: Not found
    - 422: unprocessable
    - 500: Internal Server Error
+## Endpoints 
+### GET /categories
+### GET /questions
+### DELETE /questions/<int:question_id>
+### POST /questions
+### POST /questions/search
+### GET /categories/<int:category_id>/questions
+
 ## Testing
 To run the tests, run
 ```
