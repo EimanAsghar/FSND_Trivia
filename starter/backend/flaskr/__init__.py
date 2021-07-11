@@ -24,7 +24,8 @@ def paginate_questions(request, selection):
     start = (page - 1) * QUESTIONS_PER_PAGE
     end = start + QUESTIONS_PER_PAGE
 
-    current_questions = selection[start:end]
+    questions = [Question.format() for Question in selection]
+    current_questions = questions[start:end]
 
     return current_questions
 
@@ -78,19 +79,21 @@ def create_app(test_config=None):
   ten questions per page and pagination at the bottom of the screen for three pages.
   Clicking on the page numbers should update the questions. 
   '''
+  # ERROR with pagenation in frontend
     @app.route('/questions')
     def retrieve_questions():
 
-        result = Question.query.all()
-        questions = [Question.format() for Question in result]
+        result = Question.query.order_by(Question.id).all()
+        #questions = [Question.format() for Question in result]
         categories = Category.query.all()
-        current_q = paginate_questions(request, questions)
+        current_q = paginate_questions(request, result)
+
         if len(current_q) == 0:
             abort(404)
 
         return jsonify({
             'questions': current_q,
-            'totalQuestions': len(questions),
+            'totalQuestions': len(Question.query.all()),
             'categories': {Category.id: Category.type for Category in categories},
             'currentCategory': None
         })
@@ -144,7 +147,7 @@ def create_app(test_config=None):
             question.insert()
 
             return jsonify({
-                'question': question.question,
+                'questions': question.question,
                 'answer':  question.answer,
                 'difficulty': question.difficulty,
                 'category': question.category
@@ -153,32 +156,32 @@ def create_app(test_config=None):
         except:
             abort(422)
 
-#     '''
-#   @TODO: 
-#   Create a POST endpoint to get questions based on a search term. 
-#   It should return any questions for whom the search term 
-#   is a substring of the question. 
+    '''
+  @TODO: 
+  Create a POST endpoint to get questions based on a search term. 
+  It should return any questions for whom the search term 
+  is a substring of the question. 
 
-#   TEST: Search by any phrase. The questions list will update to include 
-#   only question that include that string within their question. 
-#   Try using the word "title" to start. 
-#   '''
-#     @app.route('/questions', methods=['POST'])
-#     def search_question():
-#         body = request.get_json()
-#         term = body.get('searchTerm', None)
-#         result = Question.query.filter(
-#             Question.question.ilike('%' + term + '%')).all()
+  TEST: Search by any phrase. The questions list will update to include 
+  only question that include that string within their question. 
+  Try using the word "title" to start. 
+  '''
+    @app.route('/questions/search', methods=['POST'])
+    def search_question():
+        body = request.get_json()
+        term = body.get('searchTerm', None)
+        result = Question.query.filter(
+            Question.question.ilike('%' + term + '%')).all()
 
-#         if result is None:
-#             abort(404)
+        if result is None:
+            abort(404)
 
-#         questions = [Question.format() for Question in result]
-#         return jsonify({
-#             'question': questions,
-#             'totalQuestions': len(questions),
-#             'currentCategory': None
-#         })
+        questions = [Question.format() for Question in result]
+        return jsonify({
+            'questions': questions,
+            'totalQuestions': len(questions),
+            'currentCategory': None
+        })
 
 #     '''
 #   @TODO: 
