@@ -42,35 +42,22 @@ The `--reload` flag will detect file changes and restart the server automaticall
 
 ### API Referance 
 ## Geting Started
--[Base URL]
--[Authentication] 
-
-
-
-## Review Comment to the Students
+- Base URL: this app run only rub locally and is not hosted as a base URL.
+- Authentication: Trivia app soes not require authentication or API key.
+## Error Handling
+- Error are returnes as JSON objects in the following format:
+```bash
+{
+            "success": False,
+            "error": 422,
+            "message": "unprocessable"
+        }
 ```
-This README is missing documentation of your endpoints. Below is an example for your endpoint to get all categories. Please use it as a reference for creating your documentation and resubmit your code. 
-
-Endpoints
-GET '/api/v1.0/categories'
-GET ...
-POST ...
-DELETE ...
-
-GET '/api/v1.0/categories'
-- Fetches a dictionary of categories in which the keys are the ids and the value is the corresponding string of the category
-- Request Arguments: None
-- Returns: An object with a single key, categories, that contains a object of id: category_string key:value pairs. 
-{'1' : "Science",
-'2' : "Art",
-'3' : "Geography",
-'4' : "History",
-'5' : "Entertainment",
-'6' : "Sports"}
-
-```
-
-
+- The API will return these error types when request fail: 
+   - 400: Bad Request
+   - 404: Not found
+   - 422: unprocessable
+   - 500: Internal Server Error
 ## Testing
 To run the tests, run
 ```
