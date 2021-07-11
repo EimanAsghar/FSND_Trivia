@@ -168,13 +168,11 @@ def create_app(test_config=None):
   '''
     @app.route('/questions/search', methods=['POST'])
     def search_question():
+        
         body = request.get_json()
         term = body.get('searchTerm', None)
         result = Question.query.filter(
             Question.question.ilike('%' + term + '%')).all()
-
-        if result is None:
-            abort(404)
 
         questions = [Question.format() for Question in result]
         return jsonify({
@@ -183,82 +181,82 @@ def create_app(test_config=None):
             'currentCategory': None
         })
 
-#     '''
-#   @TODO: 
-#   Create a GET endpoint to get questions based on category. 
+    '''
+  @TODO: 
+  Create a GET endpoint to get questions based on category. 
 
-#   TEST: In the "List" tab / main screen, clicking on one of the 
-#   categories in the left column will cause only questions of that 
-#   category to be shown. 
-#   '''
+  TEST: In the "List" tab / main screen, clicking on one of the 
+  categories in the left column will cause only questions of that 
+  category to be shown. 
+  '''
 
-#     @app.route('/categories/<int:category_id>/questions', methods=['GET'])
-#     def questions_based_on_category(category_id):
+    @app.route('/categories/<int:category_id>/questions', methods=['GET'])
+    def questions_based_on_category(category_id):
 
-#         try:
-#             result = Question.query.filter(
-#                 Question.category == str(category_id)).all()
-#             questions = [question.format() for question in result]
+        try:
+            result = Question.query.filter(
+                Question.category == str(category_id)).all()
+            questions = [question.format() for question in result]
 
-#             return jsonify({
-#                 'questions': questions,
-#                 'totalQuestions': len(questions),
-#                 'currentCategory': category_id
-#             })
+            return jsonify({
+                'questions': questions,
+                'totalQuestions': len(questions),
+                'currentCategory': category_id
+            })
 
-#         except:
-#             abort(404)
+        except:
+            abort(404)
 
-#     '''
-#   @TODO: 
-#   Create a POST endpoint to get questions to play the quiz. 
-#   This endpoint should take category and previous question parameters 
-#   and return a random questions within the given category, 
-#   if provided, and that is not one of the previous questions. 
+    '''
+  @TODO: 
+  Create a POST endpoint to get questions to play the quiz. 
+  This endpoint should take category and previous question parameters 
+  and return a random questions within the given category, 
+  if provided, and that is not one of the previous questions. 
 
-#   TEST: In the "Play" tab, after a user selects "All" or a category,
-#   one question at a time is displayed, the user is allowed to answer
-#   and shown whether they were correct or not. 
-#   '''
+  TEST: In the "Play" tab, after a user selects "All" or a category,
+  one question at a time is displayed, the user is allowed to answer
+  and shown whether they were correct or not. 
+  '''
 
-#     @app.route('/quizzes', methods=['POST'])
-#     def play_game():
-#         return
-#     '''
-#   @TODO: 
-#   Create error handlers for all expected errors 
-#   including 404 and 422. 
-#   '''
-#     @app.errorhandler(404)
-#     def not_found(error):
-#         return jsonify({
-#             "success": False,
-#             "error": 404,
-#             "message": "resource not found"
-#         }), 404
+    @app.route('/quizzes', methods=['POST'])
+    def play_game():
+        return
+    '''
+   @TODO: 
+   Create error handlers for all expected errors 
+   including 404 and 422. 
+   '''
+    @app.errorhandler(404)
+    def not_found(error):
+        return jsonify({
+            "success": False,
+            "error": 404,
+            "message": "resource not found"
+        }), 404
 
-#     @app.errorhandler(422)
-#     def unprocessable(error):
-#         return jsonify({
-#             "success": False,
-#             "error": 422,
-#             "message": "unprocessable"
-#         }), 422
+    @app.errorhandler(422)
+    def unprocessable(error):
+        return jsonify({
+            "success": False,
+            "error": 422,
+            "message": "unprocessable"
+        }), 422
 
-    # @app.errorhandler(400)
-    # def bad_request(error):
-    #     return jsonify({
-    #         "success": False,
-    #         "error": 400,
-    #         "message": "Bad Request "
-    #     }), 400
+    @app.errorhandler(400)
+    def bad_request(error):
+        return jsonify({
+            "success": False,
+            "error": 400,
+            "message": "Bad Request "
+        }), 400
 
-    # @app.errorhandler(500)
-    # def Internal_Server(error):
-    #     return jsonify({
-    #         "success": False,
-    #         "error": 500,
-    #         "message": "Internal Server Error"
-    #     }), 500
+    @app.errorhandler(500)
+    def Internal_Server(error):
+        return jsonify({
+            "success": False,
+            "error": 500,
+            "message": "Internal Server Error"
+        }), 500
 
     return app
