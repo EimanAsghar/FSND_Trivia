@@ -84,9 +84,11 @@ The `--reload` flag will detect file changes and restart the server automaticall
 ```
 ### DELETE /questions/<int:question_id>
 - General: Deletes a specified question using the id of the question
-- Sample: 
+- Sample: curl -X DELETE http://localhost:5000/questions/20
 ```bash
-
+{
+  "deleted": 20
+}
 
 ```
 ### POST /questions
