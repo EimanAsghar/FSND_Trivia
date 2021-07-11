@@ -8,24 +8,53 @@ from models import setup_db, Question, Category
 
 QUESTIONS_PER_PAGE = 10
 
+
+def paginate_questions(request, selection):
+    page = request.args.get('page', 1, type=int)
+    start = (page - 1) * QUESTIONS_PER_PAGE
+    end = start + QUESTIONS_PER_PAGE
+
+    current_questions = selection[start:end]
+
+    return current_questions
+
+
 def create_app(test_config=None):
   # create and configure the app
   app = Flask(__name__)
   setup_db(app)
-  
+
   '''
   @TODO: Set up CORS. Allow '*' for origins. Delete the sample route after completing the TODOs
   '''
-
+  # CORS app
+  cors = CORS(app, resources={r"/api/*": {"origins": "*"}})
   '''
   @TODO: Use the after_request decorator to set Access-Control-Allow
   '''
+  # CORS Headers
+  @app.after_request
+  def after_request(response):
+        response.headers.add('Access-Control-Allow-Headers',
+                             'Content-Type,Authorization,true')
+        response.headers.add(
+            'Access-Control-Allow-Methods', 'GET, POST, PATCH, DELETE, OPTION')
+        return response
 
   '''
   @TODO: 
   Create an endpoint to handle GET requests 
   for all available categories.
   '''
+  @app.route('/categories')
+  def retrieve_categories():
+
+        result = Category.query.all()
+        categories = {Category.id : Category.type for Category in result}
+
+        return jsonify({
+            'categories': categories
+        })
 
 
   '''
@@ -40,6 +69,19 @@ def create_app(test_config=None):
   ten questions per page and pagination at the bottom of the screen for three pages.
   Clicking on the page numbers should update the questions. 
   '''
+  @app.route('/questions')
+  def retrieve_questions():
+
+        result = Question.query.all()
+        questions = [Question.format() for Question in result]
+        categories = Category.query.all()
+
+        return jsonify({
+            'question': paginate_questions(request, questions),
+            'totalQuestions': len(questions),
+            'categories': {Category.id: Category.type for Category in categories},
+            'currentCategory': None
+        })
 
   '''
   @TODO: 
