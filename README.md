@@ -1,4 +1,7 @@
 # Full-Stack web developer Nanodegree - Trivia API 
+# Geting Started
+- Base URL: this app run only rub locally and is not hosted as a base URL.
+- Authentication: Trivia app soes not require authentication or API key.
 # Frontend 
 ### Installing Dependencies
 
@@ -62,9 +65,6 @@ flask run --reload
 
 The `--reload` flag will detect file changes and restart the server automatically.
 ### API Referance 
-## Geting Started
-- Base URL: this app run only rub locally and is not hosted as a base URL.
-- Authentication: Trivia app soes not require authentication or API key.
 ## Error Handling
 - Error are returnes as JSON objects in the following format:
 ```bash
