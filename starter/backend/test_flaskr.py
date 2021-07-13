@@ -91,14 +91,14 @@ class TriviaTestCase(unittest.TestCase):
         self.assertEqual(res.status_code, 200)
         self.assertTrue(len(data['questions']))
 
-    # def test_question_creation_not_allowed(self):
+    def test_question_creation_not_allowed(self):
 
-    #     res = self.client().post('/questions', json={})
+        res = self.client().post('/questions', json={})
 
-    #     data = json.loads(res.data)
-    #     self.assertEqual(res.status_code, 422)
-    #     self.assertEqual(data['success'], False)
-    #     self.assertEqual(data['message'], 'unprocessable')
+        data = json.loads(res.data)
+        self.assertEqual(res.status_code, 422)
+        self.assertEqual(data['success'], False)
+        self.assertEqual(data['message'], 'unprocessable')
 
     def test_question_search(self):
         res = self.client().post("/questions/search",

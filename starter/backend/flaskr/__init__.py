@@ -204,7 +204,7 @@ def create_app(test_config=None):
     @app.route('/categories/<int:category_id>/questions', methods=['GET'])
     def questions_based_on_category(category_id):
 
-            category = Category.query.filter_by(id=id).one_or_none()
+            category = Category.query.filter_by(id=category_id).one_or_none()
             
             if (category is None):
                 abort(404)
