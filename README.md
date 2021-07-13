@@ -1,4 +1,6 @@
 # Full-Stack web developer Nanodegree - Trivia API 
+# Introduction 
+This project provide by Udacity to improve our skills in implement and test an API.
 # Geting Started
 - Base URL: this app run only rub locally and is not hosted as a base URL.
 - Authentication: Trivia app soes not require authentication or API key.
@@ -78,11 +80,12 @@ The `--reload` flag will detect file changes and restart the server automaticall
    - 400: Bad Request
    - 404: Not found
    - 422: unprocessable
-   - 500: Internal Server Error
+
 ## Endpoints 
 ### GET /categories
 - General: Return a list of categories.
 - Sample: curl http://localhost:5000/categories
+- Returns: An object with a single key, categories, that contains an object of id: category_string key:value pairs. 
 ```bash
 {
   "categories": {
@@ -92,29 +95,117 @@ The `--reload` flag will detect file changes and restart the server automaticall
     "4": "History",
     "5": "Entertainment",
     "6": "Sports"
-  }
+  },
+  "success": true
 }
 
 ```
 ### GET /questions
 - General: Return a list of questions, result are paginated in group of 10.
 - Sample: curl http://localhost:5000/questions?page=1
+- Returns: An object with 10 paginated questions, total questions, object including all categories, and current category string
 ```bash
-
+{
+  "categories": {
+    "1": "Science",
+    "2": "Art",
+    "3": "Geography",
+    "4": "History",
+    "5": "Entertainment",
+    "6": "Sports"
+  },
+  "currentCategory": null,
+  "questions": [
+    {
+      "answer": "Apollo 13",
+      "category": 5,
+      "difficulty": 4,
+      "id": 2,
+      "question": "What movie earned Tom Hanks his third straight Oscar nomination, in 1996?"
+    },
+    {
+      "answer": "Tom Cruise",
+      "category": 5,
+      "difficulty": 4,
+      "id": 4,
+      "question": "What actor did author Anne Rice first denounce, then praise in the role of her beloved Lestat?"
+    },
+    {
+      "answer": "Maya Angelou",
+      "category": 4,
+      "difficulty": 2,
+      "id": 5,
+      "question": "Whose autobiography is entitled 'I Know Why the Caged Bird Sings'?"
+    },
+    {
+      "answer": "Edward Scissorhands",
+      "category": 5,
+      "difficulty": 3,
+      "id": 6,
+      "question": "What was the title of the 1990 fantasy directed by Tim Burton about a young man with multi-bladed appendages?"
+    },
+    {
+      "answer": "Muhammad Ali",
+      "category": 4,
+      "difficulty": 1,
+      "id": 9,
+      "question": "What boxer's original name is Cassius Clay?"
+    },
+    {
+      "answer": "Brazil",
+      "category": 6,
+      "difficulty": 3,
+      "id": 10,
+      "question": "Which is the only team to play in every soccer World Cup tournament?"
+    },
+    {
+      "answer": "Uruguay",
+      "category": 6,
+      "difficulty": 4,
+      "id": 11,
+      "question": "Which country won the first ever soccer World Cup in 1930?"
+    },
+    {
+      "answer": "George Washington Carver",
+      "category": 4,
+      "difficulty": 2,
+      "id": 12,
+      "question": "Who invented Peanut Butter?"
+    },
+    {
+      "answer": "Lake Victoria",
+      "category": 3,
+      "difficulty": 2,
+      "id": 13,
+      "question": "What is the largest lake in Africa?"
+    },
+    {
+      "answer": "The Palace of Versailles",
+      "category": 3,
+      "difficulty": 3,
+      "id": 14,
+      "question": "In which royal palace would you find the Hall of Mirrors?"
+    }
+  ],
+  "success": true,
+  "totalQuestions": 21
+}
 
 ```
 ### DELETE /questions/<int:question_id>
 - General: Deletes a specified question using the id of the question
 - Sample: curl -X DELETE http://localhost:5000/questions/20
+- Returns: Does not need to return anything besides the appropriate HTTP status code. Optionally can return the id of the question. 
 ```bash
 {
-  "deleted": 20
+  "deleted": 19,
+  "success": true
 }
 
 ```
 ### POST /questions
 - General: Sends a post request in order to add a new question
-- Sample: 
+- Returns: Does not return any new data
 ```bash
 {
     'question':  'Heres a new question string',
@@ -125,14 +216,27 @@ The `--reload` flag will detect file changes and restart the server automaticall
 ```
 ### POST /questions/search
 - General: Sends a post request in order to search for a specific question by search term
-- Sample: 
-```bash
+- Returns: any array of questions, a number of totalQuestions that met the search term and the current category string 
 
+```bash
+{
+    'questions': [
+        {
+            'id': 1,
+            'question': 'This is a question',
+            'answer': 'This is an answer', 
+            'difficulty': 5,
+            'category': 5
+        },
+    ],
+    'totalQuestions': 100,
+    'currentCategory': 'Entertainment'
+}
 
 ```
 ### GET /categories/<int:category_id>/questions
 - General: Fetches questions for a cateogry specified by id request argument 
-- Sample: 
+- Returns: An object with questions for the specified category, total questions, and current category string
 ```bash
 {
     'questions': [
@@ -151,7 +255,7 @@ The `--reload` flag will detect file changes and restart the server automaticall
 ```
 ### POST /quizzes
 - General: Sends a post request in order to get the next question, returns a single new question object
-- Sample: 
+- Returns: Returns: a single new question object 
 ```bash
 {
     'question': {
