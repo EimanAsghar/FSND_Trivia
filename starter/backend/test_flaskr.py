@@ -31,10 +31,6 @@ class TriviaTestCase(unittest.TestCase):
         """Executed after reach test"""
         pass
 
-    """
-    TODO
-    Write at least one test for each test for successful operation and for expected errors.
-    """
 
     def test_get_paginated_questions(self):
 
@@ -88,14 +84,16 @@ class TriviaTestCase(unittest.TestCase):
         })
 
         data = json.loads(res.data)
+        # check the status code
         self.assertEqual(res.status_code, 200)
-        self.assertTrue(len(data['questions']))
 
     def test_question_creation_not_allowed(self):
 
+        # send bad request
         res = self.client().post('/questions', json={})
 
         data = json.loads(res.data)
+        # check the status code
         self.assertEqual(res.status_code, 422)
         self.assertEqual(data['success'], False)
         self.assertEqual(data['message'], 'unprocessable')
@@ -105,10 +103,13 @@ class TriviaTestCase(unittest.TestCase):
                                  json={"searchTerm": "title"})
 
         data = json.loads(res.data)
+        # check the status code
         self.assertEqual(res.status_code, 200)
+        # ensure the test result equal to actual result
         self.assertEqual(len(data["questions"]), 2)
 
     def test_question_search_does_not_exist(self):
+        # send bad requrest (book term does not exist)
         res = self.client().post("/questions/search",
                                  json={"searchTerm": "book"})
 
@@ -121,15 +122,17 @@ class TriviaTestCase(unittest.TestCase):
         res = self.client().get('/categories/6/questions')
 
         data = json.loads(res.data)
-
+        # check the status code
         self.assertEqual(res.status_code, 200)
         self.assertEqual(data['success'], True)
+        # ensure the test result equal to actual result
         self.assertEqual(data['totalQuestions'], 2)
 
     def test_not_exist_category(self):
         res = self.client().get('/categories/100/questions')
 
         data = json.loads(res.data)
+        # check the status code
         self.assertEqual(res.status_code, 404)
         self.assertEqual(data['success'], False)
         self.assertEqual(data['message'], 'not found')
@@ -144,15 +147,19 @@ class TriviaTestCase(unittest.TestCase):
         })
 
         data = json.loads(response.data)
+        # check the status code
         self.assertEqual(response.status_code, 200)
         self.assertEqual(data['question']['category'], 2)
+        # check if the current question already used or not
         self.assertNotEqual(data['question']['id'], 16)
         self.assertNotEqual(data['question']['id'], 17)
 
     def test_play_game_without_correct_request(self):
+        # send bad request (empty JSON)
         res = response = self.client().post('/quizzes', json={})
 
         data = json.loads(response.data)
+        # check the status code
         self.assertEqual(res.status_code, 400)
         self.assertEqual(data['success'], False)
         self.assertEqual(data['message'], 'Bad Request')
