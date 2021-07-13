@@ -145,22 +145,22 @@ def create_app(test_config=None):
         new_category = body.get('category', None)
         new_difficulty = body.get('difficulty', None)
 
-        try:
-            # create question object
-            question = Question(question=new_question, answer=new_answer,
-                                category=new_category, difficulty=new_difficulty)
-            question.insert()
-
-            return jsonify({
-                'success': True,
-                'questions': question.question,
-                'answer':  question.answer,
-                'difficulty': question.difficulty,
-                'category': question.category
-            }), 200
-
-        except:
+        # check if the input empty or not
+        if(new_question or new_answer or new_category or new_difficulty) == None:
             abort(422)
+
+        # create question object
+        question = Question(question=new_question, answer=new_answer,
+                            category=new_category, difficulty=new_difficulty)
+        question.insert()
+
+        return jsonify({
+            'success': True,
+            'questions': question.question,
+            'answer':  question.answer,
+            'difficulty': question.difficulty,
+            'category': question.category
+        }), 200
 
     '''
   @TODO: 
@@ -180,10 +180,9 @@ def create_app(test_config=None):
         # find the question
         result = Question.query.filter(
             Question.question.ilike('%' + term + '%')).all()
-        
-        if (len(result) == 0):
-                abort(404)
 
+        if (len(result) == 0):
+            abort(404)
 
         questions = [Question.format() for Question in result]
         return jsonify({
@@ -205,10 +204,15 @@ def create_app(test_config=None):
     @app.route('/categories/<int:category_id>/questions', methods=['GET'])
     def questions_based_on_category(category_id):
 
-        try:
+            category = Category.query.filter_by(id=id).one_or_none()
+            
+            if (category is None):
+                abort(404)
+
             # get question based on category
             result = Question.query.filter(
-                Question.category == str(category_id)).all()
+                Question.category == category_id).all()
+
             questions = [question.format() for question in result]
 
             return jsonify({
@@ -218,8 +222,6 @@ def create_app(test_config=None):
                 'currentCategory': category_id
             }), 200
 
-        except:
-            abort(404)
 
     '''
   @TODO: 
@@ -247,10 +249,9 @@ def create_app(test_config=None):
         # a string of the current category
         quiz_category = body.get('quiz_category')
 
-        #check if JSON empty or not
+        # check if JSON empty or not
         if ((previous_questions is None) or (quiz_category is None)):
             abort(400)
-
 
         # get questions based on user selection (All or by category)
         # for ALL selection
