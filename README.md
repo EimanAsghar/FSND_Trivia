@@ -1,5 +1,5 @@
 # Full-Stack web developer Nanodegree - Trivia API 
-# Introduction 
+# Purpose
 This project provide by Udacity to improve our skills in implement and test an API.
 # Geting Started
 - Base URL: this app run only rub locally and is not hosted as a base URL.
