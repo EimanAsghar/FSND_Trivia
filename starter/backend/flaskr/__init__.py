@@ -6,6 +6,7 @@ from flask import (
     jsonify
 )
 from flask.globals import current_app
+from sqlalchemy.sql.sqltypes import INTEGER
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
 import random
@@ -59,13 +60,14 @@ def create_app(test_config=None):
   '''
     @app.route('/categories')
     def retrieve_categories():
-
+        # get all categories
         result = Category.query.all()
         categories = {Category.id: Category.type for Category in result}
 
         return jsonify({
+            'success': True,
             'categories': categories
-        })
+        }), 200
 
     '''
   @TODO: 
@@ -79,24 +81,27 @@ def create_app(test_config=None):
   ten questions per page and pagination at the bottom of the screen for three pages.
   Clicking on the page numbers should update the questions. 
   '''
-  # ERROR with pagenation in frontend
+
     @app.route('/questions')
     def retrieve_questions():
 
+        # get all questions and categories
         result = Question.query.order_by(Question.id).all()
-        #questions = [Question.format() for Question in result]
         categories = Category.query.all()
+
+        # paginate ---> 10 questions per page
         current_q = paginate_questions(request, result)
 
         if len(current_q) == 0:
             abort(404)
 
         return jsonify({
+            'success': True,
             'questions': current_q,
             'totalQuestions': len(Question.query.all()),
             'categories': {Category.id: Category.type for Category in categories},
             'currentCategory': None
-        })
+        }), 200
 
     '''
   @TODO: 
@@ -108,20 +113,19 @@ def create_app(test_config=None):
     @app.route('/questions/<int:question_id>', methods=['DELETE'])
     def delete_question(question_id):
         try:
+            # delete question based on spacific  id
             question = Question.query.filter(
                 Question.id == question_id).one_or_none()
-
-            if question is None:
-                abort(404)
 
             question.delete()
 
             return jsonify({
+                'success': True,
                 'deleted': question_id
-            })
+            }), 200
 
         except:
-            abort(422)
+            abort(404)
     '''
   @TODO: 
   Create an endpoint to POST a new question, 
@@ -134,24 +138,26 @@ def create_app(test_config=None):
   '''
     @app.route('/questions', methods=['POST'])
     def create_question():
+        # get data to create new question
         body = request.get_json()
-
         new_question = body.get('question', None)
         new_answer = body.get('answer', None)
         new_category = body.get('category', None)
         new_difficulty = body.get('difficulty', None)
 
         try:
+            # create question object
             question = Question(question=new_question, answer=new_answer,
                                 category=new_category, difficulty=new_difficulty)
             question.insert()
 
             return jsonify({
+                'success': True,
                 'questions': question.question,
                 'answer':  question.answer,
                 'difficulty': question.difficulty,
                 'category': question.category
-            })
+            }), 200
 
         except:
             abort(422)
@@ -168,18 +174,24 @@ def create_app(test_config=None):
   '''
     @app.route('/questions/search', methods=['POST'])
     def search_question():
-        
+        # get search term
         body = request.get_json()
         term = body.get('searchTerm', None)
+        # find the question
         result = Question.query.filter(
             Question.question.ilike('%' + term + '%')).all()
+        
+        if (len(result) == 0):
+                abort(404)
+
 
         questions = [Question.format() for Question in result]
         return jsonify({
+            'success': True,
             'questions': questions,
             'totalQuestions': len(questions),
             'currentCategory': None
-        })
+        }), 200
 
     '''
   @TODO: 
@@ -194,15 +206,17 @@ def create_app(test_config=None):
     def questions_based_on_category(category_id):
 
         try:
+            # get question based on category
             result = Question.query.filter(
                 Question.category == str(category_id)).all()
             questions = [question.format() for question in result]
 
             return jsonify({
+                'success': True,
                 'questions': questions,
                 'totalQuestions': len(questions),
                 'currentCategory': category_id
-            })
+            }), 200
 
         except:
             abort(404)
@@ -217,11 +231,54 @@ def create_app(test_config=None):
   TEST: In the "Play" tab, after a user selects "All" or a category,
   one question at a time is displayed, the user is allowed to answer
   and shown whether they were correct or not. 
+
+}
   '''
 
     @app.route('/quizzes', methods=['POST'])
     def play_game():
-        return
+
+        # request data
+        body = request.get_json()
+
+        # an array of question id's such as [1, 4, 20, 15]
+        previous_questions = body.get('previous_questions')
+
+        # a string of the current category
+        quiz_category = body.get('quiz_category')
+
+        #check if JSON empty or not
+        if ((previous_questions is None) or (quiz_category is None)):
+            abort(400)
+
+
+        # get questions based on user selection (All or by category)
+        # for ALL selection
+        if (quiz_category['id'] == 0):
+            # get question without the question already in previous question array
+            questions = Question.query.filter(
+                Question.id.notin_(previous_questions)
+            ).all()
+        # load questions for given category without the question already in previous question array
+        else:
+            questions = Question.query.filter_by(
+                category=quiz_category['id']).filter(
+                Question.id.notin_(previous_questions)
+            ).all()
+
+            # if all question already exist in previous question array stop the game.
+        if len(questions) == 0:
+            return jsonify({
+                'success': True
+            }), 200
+        else:
+            # if it's not exist in previous question array, send random question
+            random_question = random.choice(questions)
+            # Returns: a single new question object
+            return jsonify({
+                'question': random_question.format()
+            })
+
     '''
    @TODO: 
    Create error handlers for all expected errors 
@@ -232,7 +289,7 @@ def create_app(test_config=None):
         return jsonify({
             "success": False,
             "error": 404,
-            "message": "resource not found"
+            "message": "not found"
         }), 404
 
     @app.errorhandler(422)
@@ -248,15 +305,15 @@ def create_app(test_config=None):
         return jsonify({
             "success": False,
             "error": 400,
-            "message": "Bad Request "
+            "message": "Bad Request"
         }), 400
 
-    @app.errorhandler(500)
-    def Internal_Server(error):
-        return jsonify({
-            "success": False,
-            "error": 500,
-            "message": "Internal Server Error"
-        }), 500
+    # @app.errorhandler(500)
+    # def Internal_Server(error):
+    #     return jsonify({
+    #         "success": False,
+    #         "error": 500,
+    #         "message": "Internal Server Error"
+    #     }), 500
 
     return app
