@@ -2,7 +2,7 @@
 # Purpose
 This project provide by Udacity to improve our skills in implement and test an API.
 # Geting Started
-- Base URL: this app run only rub locally and is not hosted as a base URL.
+- Base URL: this app run only run locally and is not hosted as a base URL.
 - Authentication: Trivia app soes not require authentication or API key.
 # Frontend 
 ### Installing Dependencies
